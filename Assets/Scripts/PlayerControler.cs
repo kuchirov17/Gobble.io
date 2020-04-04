@@ -47,26 +47,6 @@ public class PlayerControler : MonoBehaviour
 			return;
 		}
 
-		/*Vector3 mousePos = Input.mousePosition;
-		if (Input.GetMouseButtonDown(0))
-		{
-			dragStartPos = mousePos;
-		}
-		else if (Input.GetMouseButton(0))
-		{
-			curDragDistance = (mousePos - dragStartPos).magnitude;
-
-			if (curDragDistance > maxDragDistance)
-			{
-				dragStartPos = mousePos - moveDirection * maxDragDistance;
-				curDragDistance = (mousePos - dragStartPos).magnitude;
-			}
-
-			moveDirection = (mousePos - dragStartPos).normalized;
-			var direction = new Vector3(moveDirection.x, 0, moveDirection.y);
-			transform.position += direction * speed * curDragDistance * Time.deltaTime;
-			directionRing.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(new Vector3(90, 0, 0));
-		}*/
 		MoveDirection(this.gameObject, transform.forward, moveSpeed);
 
 		if (Input.GetMouseButton(0))
@@ -120,9 +100,13 @@ public class PlayerControler : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.gameObject.layer == 10) // Victims fall into the hole
+		if (other.gameObject.layer == 10 && other.gameObject.CompareTag("Food")) // Victims fall into the hole
 		{
 			AddScore(1);
+		}
+		else if(other.gameObject.layer == 10 && other.gameObject.CompareTag("Obstacle"))
+		{
+			AddScore(-1);
 		}
 	}
 
@@ -164,6 +148,11 @@ public class PlayerControler : MonoBehaviour
 	public void AddScore(int amount)
 	{
 		score += amount;
+
+		if (score < 0)
+		{
+			GameManager.gm.GameOver();
+		}
 		sizeUp = false;
 		//CheckSize();
 
@@ -215,12 +204,29 @@ public class PlayerControler : MonoBehaviour
 			coll.center = direction * (1 + scale / 100f);
 		}
 
-		//GameManager.gm.cam.ZoomOut();
 	}
 
-	/*/private void OnDrawGizmos()
-	{
-		Debug.DrawLine(transform.position - new Vector3(radius, 0, 0), transform.position + new Vector3(radius, 0, 0), Color.black);
-		Debug.DrawLine(transform.position - new Vector3(0, 0, radius), transform.position + new Vector3(0, 0, radius), Color.black);
-	}*/
 }
+
+
+
+/*Vector3 mousePos = Input.mousePosition;
+if (Input.GetMouseButtonDown(0))
+{
+	dragStartPos = mousePos;
+}
+else if (Input.GetMouseButton(0))
+{
+	curDragDistance = (mousePos - dragStartPos).magnitude;
+
+	if (curDragDistance > maxDragDistance)
+	{
+		dragStartPos = mousePos - moveDirection * maxDragDistance;
+		curDragDistance = (mousePos - dragStartPos).magnitude;
+	}
+
+	moveDirection = (mousePos - dragStartPos).normalized;
+	var direction = new Vector3(moveDirection.x, 0, moveDirection.y);
+	transform.position += direction * speed * curDragDistance * Time.deltaTime;
+	directionRing.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(new Vector3(90, 0, 0));
+}*/

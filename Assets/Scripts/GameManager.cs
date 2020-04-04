@@ -9,19 +9,23 @@ public class GameManager : MonoBehaviour
 	public PlayerControler pc;
 	public CameraController cam;
 	public MenuManager ui;
+	
 
 	public bool started;
-	public bool gameOver;
+	public bool gameOver=false;
 
 	public float gravity = 10f;
 	public float time = 120; // Total game time in seconds
+	private float tempTime;
 
 	private void Awake()
 	{
 		if (!gm)
 		{
 			gm = this;
+			tempTime = time;
 			DontDestroyOnLoad(this);
+			
 		}
 	}
 
@@ -42,8 +46,14 @@ public class GameManager : MonoBehaviour
 		if (pc.score > curBest)
 		{
 			PlayerPrefs.SetInt("best", pc.score);
+			ui.bestScore.gameObject.SetActive(true);
 			ui.finalBestText.gameObject.SetActive(true);
-		}		
+		}
+
+		if (pc.score < curBest)
+		{
+			ui.bestScore.gameObject.SetActive(false);
+		}
 	}
 
 	private void Update()
@@ -74,6 +84,8 @@ public class GameManager : MonoBehaviour
 
 	public void RestartScene()
 	{
+		time = tempTime;
+		
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
