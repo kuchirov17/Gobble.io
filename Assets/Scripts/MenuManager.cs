@@ -11,7 +11,7 @@ public class MenuManager : MonoBehaviour
 
 	public GameObject gameplay;
 	public TextMeshProUGUI scoreText;
-	public TextMeshProUGUI timerText;
+	public Slider fuelSlider;
 
 	public GameObject gameOver;
 	public GameObject bestScore;

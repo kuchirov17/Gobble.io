@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class PlayerControler : MonoBehaviour
@@ -8,14 +9,15 @@ public class PlayerControler : MonoBehaviour
 
 	public int score;
 	public float scale;
-	public float speed;
 	public float radius;
+	public float fuel;
 	public bool sizeUp;
 
 	public Transform visuals;
 	public Transform directionRing;
 	public Transform playerCanvas;
 	public GameObject scoreIndicator;
+	public GameObject minusScoreIndicator;
 
 	public SphereCollider detector;
 	public BoxCollider[] colliders;
@@ -29,6 +31,14 @@ public class PlayerControler : MonoBehaviour
 	public float moveSpeed;
 	public float rotationSpeed;
 
+	public Transform startPos;
+	[Header("Расстояние")]
+	public float distance;
+	[Header("Время")]
+	public float time;
+	[Header("Скорость")]
+	public float speed;
+
 	private void Awake()
 	{
 		GameManager.gm.pc = this;
@@ -39,28 +49,24 @@ public class PlayerControler : MonoBehaviour
 		RefreshScale();
 	}
 
-	float rotX;
 	private void Update()
     {
+		
 		if (!GameManager.gm.started || GameManager.gm.gameOver)
 		{
 			return;
 		}
 
 		MoveDirection(this.gameObject, transform.forward, moveSpeed);
+		distance = Vector3.Distance(startPos.position, transform.position);
+		time += Time.deltaTime;
+		speed = distance / time;
+
 
 		if (Input.GetMouseButton(0))
 		{
 			LockedRotation(this.gameObject);
 			LockedRotation(directionRing.gameObject);
-			//transform.RotateAround(Vector3.up, rotX);
-			//directionRing.RotateAround(Vector3.up, rotX);
-
-			//float minRotation = -45;
-			//float maxRotation = 45;
-			//Vector3 currentRotation = transform.localRotation.eulerAngles;
-			//currentRotation.y = Mathf.Clamp(currentRotation.y, minRotation, maxRotation);
-			//transform.localRotation = Quaternion.Euler(currentRotation);
 		}
 
 		var nearbyObjects = Physics.OverlapSphere(transform.position, radius);
@@ -136,7 +142,7 @@ public class PlayerControler : MonoBehaviour
 	}
 
 
-
+	float rotX;
 	void LockedRotation(GameObject rotObj)
 	{
 		rotX += Input.GetAxis("Mouse X") * rotationSpeed * Mathf.Deg2Rad;
@@ -148,20 +154,35 @@ public class PlayerControler : MonoBehaviour
 	public void AddScore(int amount)
 	{
 		score += amount;
+		fuel += 3f*amount;
 
 		if (score < 0)
 		{
-			GameManager.gm.GameOver();
+			score = 0;
 		}
+
 		sizeUp = false;
+
 		//CheckSize();
+		if (amount > 0)
+		{
+			GameObject indicator = Instantiate(scoreIndicator, playerCanvas);
+			TextMeshProUGUI scoreText = indicator.GetComponent<TextMeshProUGUI>();
+			scoreText.text = "+" + amount.ToString();
+			StartCoroutine(DisableAfter(indicator, 2f));
 
-		GameObject indicator = Instantiate(scoreIndicator, playerCanvas);
-		TextMeshProUGUI scoreText = indicator.GetComponent<TextMeshProUGUI>();
-		scoreText.text = "+" + amount.ToString();
-		StartCoroutine(DisableAfter(indicator, 2f));
+			GameManager.gm.ui.scoreText.text = score.ToString();
+		}
 
-		GameManager.gm.ui.scoreText.text = score.ToString();
+		if (amount < 0)
+		{
+			GameObject indicator = Instantiate(minusScoreIndicator, playerCanvas);
+			TextMeshProUGUI scoreText = indicator.GetComponent<TextMeshProUGUI>();
+			scoreText.text = "-" + amount.ToString();
+			StartCoroutine(DisableAfter(indicator, 2f));
+
+			GameManager.gm.ui.scoreText.text = score.ToString();
+		}
 	}
 
 	private IEnumerator DisableAfter(GameObject obj, float delay)
@@ -204,6 +225,15 @@ public class PlayerControler : MonoBehaviour
 			coll.center = direction * (1 + scale / 100f);
 		}
 
+	}
+
+	public IEnumerator dropFuel()
+	{
+		while (true)
+		{
+			fuel -= 0.1f;
+			yield return new WaitForSeconds(0.01f);
+		}
 	}
 
 }

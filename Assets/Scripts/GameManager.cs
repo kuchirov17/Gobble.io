@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
 	public static GameManager gm;
 	public PlayerControler pc;
-	public CameraController cam;
 	public MenuManager ui;
 	
 
@@ -25,13 +24,13 @@ public class GameManager : MonoBehaviour
 			gm = this;
 			tempTime = time;
 			DontDestroyOnLoad(this);
-			
 		}
 	}
 
 	public void Play()
 	{
 		started = true;
+		pc.StartCoroutine(pc.dropFuel());
 	}
 
 	public void GameOver()
@@ -68,24 +67,19 @@ public class GameManager : MonoBehaviour
 			return;
 		}
 
-		time -= Time.deltaTime;
+		ui.fuelSlider.value = pc.fuel;
 
-		if (time <= 1)
+		if (pc.fuel < 0)
 		{
 			GameOver();
-			ui.timerText.text = "00:00";
 			return;
 		}
 
-		var minutes = Mathf.FloorToInt(time / 60f);
-		var seconds = Mathf.FloorToInt(time - minutes * 60f);
-		ui.timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
 	}
 
 	public void RestartScene()
 	{
 		time = tempTime;
-		
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
