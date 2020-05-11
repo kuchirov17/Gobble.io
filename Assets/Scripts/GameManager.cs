@@ -8,10 +8,14 @@ public class GameManager : MonoBehaviour
 	public static GameManager gm;
 	public PlayerControler pc;
 	public MenuManager ui;
+	public ItemsGenerator ig;
+	public DragControl dc;
+	
 	
 
 	public bool started;
 	public bool gameOver=false;
+	public bool soundOn = true;
 
 	public float gravity = 10f;
 	public float time = 120; // Total game time in seconds
@@ -30,12 +34,20 @@ public class GameManager : MonoBehaviour
 	public void Play()
 	{
 		started = true;
+		dc.gameObject.GetComponent<RectTransform>().localPosition = Vector3.zero;
 		pc.StartCoroutine(pc.dropFuel());
+		ig.StartCoroutine(ig.FoodsGenerator());
+		ig.StartCoroutine(ig.ObstaclesGenerator());
+
+
 	}
 
 	public void GameOver()
 	{
 		gameOver = true;
+		dc.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, -9999f);
+		pc.StopCoroutine(pc.dropFuel());
+		ig.gameObject.SetActive(false);
 		ui.gameplay.SetActive(false);
 		ui.gameOver.SetActive(true);
 		ui.finalScoreText.text = pc.score.ToString();

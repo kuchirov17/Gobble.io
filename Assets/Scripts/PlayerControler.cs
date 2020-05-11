@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class PlayerControler : MonoBehaviour
@@ -20,14 +21,8 @@ public class PlayerControler : MonoBehaviour
 	public GameObject minusScoreIndicator;
 
 	public SphereCollider detector;
-	public BoxCollider[] colliders;
 	public List<Rigidbody> victims;
 	
-	public float maxDragDistance = 40f;
-	private float curDragDistance;
-	private Vector3 moveDirection;
-	private Vector3 dragStartPos;
-
 	public float moveSpeed;
 	public float rotationSpeed;
 
@@ -49,6 +44,8 @@ public class PlayerControler : MonoBehaviour
 		RefreshScale();
 	}
 
+
+
 	private void Update()
     {
 		
@@ -61,13 +58,6 @@ public class PlayerControler : MonoBehaviour
 		distance = Vector3.Distance(startPos.position, transform.position);
 		time += Time.deltaTime;
 		speed = distance / time;
-
-
-		if (Input.GetMouseButton(0))
-		{
-			LockedRotation(this.gameObject);
-			LockedRotation(directionRing.gameObject);
-		}
 
 		var nearbyObjects = Physics.OverlapSphere(transform.position, radius);
 		foreach(var nearbyObject in nearbyObjects)
@@ -98,11 +88,15 @@ public class PlayerControler : MonoBehaviour
 			return;
 		}
 
+	
+
 		foreach (var victim in victims)
 		{
 			victim.AddForce(Vector3.down * scale * GameManager.gm.gravity * Time.fixedDeltaTime, ForceMode.VelocityChange);
 		}
 	}
+
+	
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -143,7 +137,7 @@ public class PlayerControler : MonoBehaviour
 
 
 	float rotX;
-	void LockedRotation(GameObject rotObj)
+	public void LockedRotation(GameObject rotObj)
 	{
 		rotX += Input.GetAxis("Mouse X") * rotationSpeed * Mathf.Deg2Rad;
 		rotX = Mathf.Clamp(rotX, -45.0f, 45.0f);
@@ -154,7 +148,7 @@ public class PlayerControler : MonoBehaviour
 	public void AddScore(int amount)
 	{
 		score += amount;
-		fuel += 3f*amount;
+		fuel += 5f*amount;
 
 		if (score < 0)
 		{
@@ -219,12 +213,6 @@ public class PlayerControler : MonoBehaviour
 		detector.center = new Vector3(0, -1f - scale / 2f, 0);
 		detector.radius = scale / 2f;		
 
-		foreach (var coll in colliders)
-		{
-			var direction = coll.center.normalized * 50.025f;
-			coll.center = direction * (1 + scale / 100f);
-		}
-
 	}
 
 	public IEnumerator dropFuel()
@@ -235,6 +223,7 @@ public class PlayerControler : MonoBehaviour
 			yield return new WaitForSeconds(0.01f);
 		}
 	}
+
 
 }
 

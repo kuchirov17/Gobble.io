@@ -18,6 +18,8 @@ public class MenuManager : MonoBehaviour
 	public TextMeshProUGUI finalScoreText;
 	public TextMeshProUGUI finalBestText;
 
+	public GameObject soundOff;
+
 	private void Awake()
 	{
 		GameManager.gm.ui = this;
@@ -51,4 +53,18 @@ public class MenuManager : MonoBehaviour
 		GameManager.gm.gameOver = false;
 		GameManager.gm.RestartScene();
 	}
+
+	public void SoundOff()
+	{
+		soundOff.SetActive(!soundOff.activeSelf);
+		GameManager.gm.soundOn = !GameManager.gm.soundOn;
+	}
+
+	public void Quit()
+	{
+		Application.Quit();
+		Debug.Log("Quit");
+	}
+
+
 }
