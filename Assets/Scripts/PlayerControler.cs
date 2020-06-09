@@ -43,9 +43,6 @@ public class PlayerControler : MonoBehaviour
 	{
 		RefreshScale();
 	}
-
-
-
 	private void Update()
     {
 		
@@ -60,6 +57,7 @@ public class PlayerControler : MonoBehaviour
 		speed = distance / time;
 
 		var nearbyObjects = Physics.OverlapSphere(transform.position, radius);
+		
 		foreach(var nearbyObject in nearbyObjects)
 		{
 			if (nearbyObject.gameObject == gameObject || nearbyObject.gameObject.layer != 9)
@@ -137,12 +135,17 @@ public class PlayerControler : MonoBehaviour
 
 
 	float rotX;
+
+	[System.Obsolete]
 	public void LockedRotation(GameObject rotObj)
 	{
 		rotX += Input.GetAxis("Mouse X") * rotationSpeed * Mathf.Deg2Rad;
 		rotX = Mathf.Clamp(rotX, -45.0f, 45.0f);
 		rotObj.transform.RotateAround(Vector3.up, rotX);
-		rotObj.transform.localEulerAngles = new Vector3(rotObj.transform.localEulerAngles.x, rotX,rotObj.transform.localEulerAngles.z);
+		rotObj.transform.localEulerAngles = new Vector3(
+			rotObj.transform.localEulerAngles.x, 
+			rotX,
+			rotObj.transform.localEulerAngles.z);
 	}
 
 	public void AddScore(int amount)
@@ -164,7 +167,6 @@ public class PlayerControler : MonoBehaviour
 			TextMeshProUGUI scoreText = indicator.GetComponent<TextMeshProUGUI>();
 			scoreText.text = "+" + amount.ToString();
 			StartCoroutine(DisableAfter(indicator, 2f));
-
 			GameManager.gm.ui.scoreText.text = score.ToString();
 		}
 
@@ -173,8 +175,7 @@ public class PlayerControler : MonoBehaviour
 			GameObject indicator = Instantiate(minusScoreIndicator, playerCanvas);
 			TextMeshProUGUI scoreText = indicator.GetComponent<TextMeshProUGUI>();
 			scoreText.text = "-" + amount.ToString();
-			StartCoroutine(DisableAfter(indicator, 2f));
-
+			StartCoroutine(DisableAfter(indicator, 2f));	
 			GameManager.gm.ui.scoreText.text = score.ToString();
 		}
 	}
@@ -223,8 +224,6 @@ public class PlayerControler : MonoBehaviour
 			yield return new WaitForSeconds(0.01f);
 		}
 	}
-
-
 }
 
 

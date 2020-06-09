@@ -6,12 +6,9 @@ public class ItemsGenerator : MonoBehaviour
 {
 
     public GameObject player;
-
     public GameObject[] foods;
     public GameObject[] obstacles;
-
     float offset;
-
     public void Awake()
     {
         offset = Vector3.Distance(player.transform.position, transform.position);
@@ -21,7 +18,6 @@ public class ItemsGenerator : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, player.transform.position.z+offset);
     }
-    
     public IEnumerator FoodsGenerator()
     {
         while (true)
@@ -33,7 +29,6 @@ public class ItemsGenerator : MonoBehaviour
                 Quaternion.identity);
         }
     }
-
     public IEnumerator ObstaclesGenerator()
     {
         while (true)

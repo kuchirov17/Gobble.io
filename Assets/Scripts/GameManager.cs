@@ -16,9 +16,8 @@ public class GameManager : MonoBehaviour
 	public bool started;
 	public bool gameOver=false;
 	public bool soundOn = true;
-
 	public float gravity = 10f;
-	public float time = 120; // Total game time in seconds
+	public float time = 120;
 	private float tempTime;
 
 	private void Awake()
@@ -34,7 +33,7 @@ public class GameManager : MonoBehaviour
 	public void Play()
 	{
 		started = true;
-		dc.gameObject.GetComponent<RectTransform>().localPosition = Vector3.zero;
+		dc.gameObject.SetActive(true);
 		pc.StartCoroutine(pc.dropFuel());
 		ig.StartCoroutine(ig.FoodsGenerator());
 		ig.StartCoroutine(ig.ObstaclesGenerator());
@@ -45,7 +44,7 @@ public class GameManager : MonoBehaviour
 	public void GameOver()
 	{
 		gameOver = true;
-		dc.gameObject.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, -9999f);
+		dc.gameObject.SetActive(false);
 		pc.StopCoroutine(pc.dropFuel());
 		ig.gameObject.SetActive(false);
 		ui.gameplay.SetActive(false);

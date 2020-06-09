@@ -11,6 +11,7 @@ public class DragControl : MonoBehaviour, IDragHandler
     public void Awake()
     {
         GameManager.gm.dc = this;
+        gameObject.SetActive(false);
     }
     
     public void OnDrag(PointerEventData eventData)
